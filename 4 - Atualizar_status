@@ -1,0 +1,101 @@
+{
+  "name": "4 - Atualizar Status",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e56e25c6-d00e-40aa-83b6-4985aea910f1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        320,
+        528
+      ],
+      "id": "e5029ecb-002f-4327-9ced-b8c78da8b946",
+      "name": " Webhook Digitando...",
+      "webhookId": "e56e25c6-d00e-40aa-83b6-4985aea910f1"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "send-presence",
+        "instanceName": "={{ $json.body.instancia }}",
+        "remoteJid": "={{ $json.body.telefone }}",
+        "presence": "={{ $json.body.status }}",
+        "delay": 20000
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        560,
+        528
+      ],
+      "id": "a4bf67a7-2e74-48fe-88dc-0fdb8c749de7",
+      "name": "Atualizar status",
+      "credentials": {
+        "evolutionApi": {
+          "id": "t5cgRqwq5TU7l4wf",
+          "name": "Evolution Imobiliaria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "![Evolution API](https://mintlify.s3.us-west-1.amazonaws.com/evolution/logo/dark.svg)",
+        "height": 100,
+        "width": 280,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        304
+      ],
+      "id": "3e91d5a5-b678-440b-9526-d4011c01425a",
+      "name": "Sticky Note20"
+    },
+    {
+      "parameters": {
+        "content": "## ",
+        "height": 432,
+        "width": 656
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "11061c8b-9072-49fd-893c-ac669155a9fb",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    " Webhook Digitando...": {
+      "main": [
+        [
+          {
+            "node": "Atualizar status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "24142ad3-0c47-4c58-a3e1-d80b7b6cd3fb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51ec8b13dcbf144ca4f84c354a83778b0deb1106e3615dc3e4f21105dfa59e92"
+  },
+  "id": "iWFmWA5bAVXMnK4c",
+  "tags": []
+}
