@@ -1,0 +1,300 @@
+{
+  "name": "3 - BAIXAR E ENVIAR ARQUIVO GOOGLE DRIVE IMOBILIARIA",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "file_id"
+            },
+            {
+              "name": "instancia"
+            },
+            {
+              "name": "telefone"
+            },
+            {
+              "name": "tipo"
+            },
+            {
+              "name": "nome_documento"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        416
+      ],
+      "id": "ddb78f0a-d632-4f0d-987d-e1631c4f3195",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-image",
+        "instanceName": "={{ $('When Executed by Another Workflow').item.json.instancia }}",
+        "remoteJid": "={{ $('When Executed by Another Workflow').item.json.telefone }}",
+        "media": "={{ $json.data }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        304
+      ],
+      "id": "4989f02e-2ea4-4c15-91ff-5f7b05bb1f4a",
+      "name": "Enviar imagem",
+      "credentials": {
+        "evolutionApi": {
+          "id": "me0DAjmPwqicVrhv",
+          "name": "Evolution Secretaria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-document",
+        "instanceName": "={{ $('When Executed by Another Workflow').item.json.instancia }}",
+        "remoteJid": "={{ $('When Executed by Another Workflow').item.json.telefone }}",
+        "media": "={{ $json.data }}",
+        "fileName": "={{ $('When Executed by Another Workflow').item.json.nome_documento || '' }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        496
+      ],
+      "id": "b73875cf-3092-408b-b59e-3baddb83769f",
+      "name": "Enviar documento",
+      "credentials": {
+        "evolutionApi": {
+          "id": "me0DAjmPwqicVrhv",
+          "name": "Evolution Secretaria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('When Executed by Another Workflow').item.json.tipo }}",
+                    "rightValue": "imagem",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "de580b52-c344-4832-ba99-e4453d158173"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Imagem"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1cff2119-c28d-43a2-9715-0ff5b944f743",
+                    "leftValue": "={{ $('When Executed by Another Workflow').item.json.tipo }}",
+                    "rightValue": "documento",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Documento"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1072,
+        416
+      ],
+      "id": "48455ee2-a49b-455f-b7a9-46d81683c92a",
+      "name": "Imagem ou documento"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        848,
+        416
+      ],
+      "id": "d0510eb3-0a75-4bb4-acc1-54247b695066",
+      "name": "Converter arquivo"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.file_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        640,
+        416
+      ],
+      "id": "fdef427d-d293-447b-8b54-a65af6ee37d3",
+      "name": "Baixar arquivo",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "FhooX57Dj3rAOzDE",
+          "name": "Google Drive Ghudu"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "71dda3d7-4505-4d03-b70f-63f5c005c0c3",
+              "name": "sucesso",
+              "value": "={{ $json.success }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1632,
+        416
+      ],
+      "id": "c106801c-c602-4ae4-bc02-590504ab74ec",
+      "name": "Output"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Baixar arquivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar imagem": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar documento": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Imagem ou documento": {
+      "main": [
+        [
+          {
+            "node": "Enviar imagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter arquivo": {
+      "main": [
+        [
+          {
+            "node": "Imagem ou documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar arquivo": {
+      "main": [
+        [
+          {
+            "node": "Converter arquivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "71bd265b-e51b-4397-b310-36d5be8cd279",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51ec8b13dcbf144ca4f84c354a83778b0deb1106e3615dc3e4f21105dfa59e92"
+  },
+  "id": "1qzaAus2f16HtgKo",
+  "tags": []
+}
